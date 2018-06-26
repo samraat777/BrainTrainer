@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.support.v7.widget.GridLayout;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,12 +29,14 @@ public class MainActivity extends AppCompatActivity {
     Button playAgain;
     TextView timertextView;
     RelativeLayout relative;
+    boolean gameIsActive=true;
 
 
 
 
     public void playAgain(View view)
     {
+        gameIsActive=true;
         Log.i("info " ," play Again button");
         score=0;
         numberOfQuestion=0;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                gameIsActive=false;
                 playAgain.setVisibility(View.VISIBLE);
                 timertextView.setText("0s");
                 resultText.setText("Your Score: "+ Integer.toString((score))+ "/" + Integer.toString(numberOfQuestion));
@@ -86,29 +88,28 @@ public class MainActivity extends AppCompatActivity {
                 answer.add(incorrectAnswer);
             }
         }
-
-        button0.setText(Integer.toString(answer.get(0)));
-        button1.setText(Integer.toString(answer.get(1)));
-        button2.setText(Integer.toString(answer.get(2)));
-        button3.setText(Integer.toString(answer.get(3)));
-
+        if(gameIsActive) {
+            button0.setText(Integer.toString(answer.get(0)));
+            button1.setText(Integer.toString(answer.get(1)));
+            button2.setText(Integer.toString(answer.get(2)));
+            button3.setText(Integer.toString(answer.get(3)));
+        }
     }
 
     public void chooseAnswer(View view)
     {
-        Log.i("Tag",(String)view.getTag());
-        if(view.getTag().toString().equals(Integer.toString(locationOfCorrectAnswer)))
-        {
-           score++;
-           resultText.setText("CORRECT!");
+        if(gameIsActive) {
+            Log.i("Tag", (String) view.getTag());
+            if (view.getTag().toString().equals(Integer.toString(locationOfCorrectAnswer))) {
+                score++;
+                resultText.setText("CORRECT!");
+            } else {
+                resultText.setText("INCORRECT!");
+            }
+            numberOfQuestion++;
+            result.setText(Integer.toString((score)) + "/" + Integer.toString(numberOfQuestion));
+            generateQuestion();
         }
-        else
-        {
-            resultText.setText("INCORRECT!");
-        }
-        numberOfQuestion++;
-        result.setText(Integer.toString((score))+ "/" + Integer.toString(numberOfQuestion));
-        generateQuestion();
     }
 
     public void go(View view)
@@ -127,11 +128,12 @@ public class MainActivity extends AppCompatActivity {
         startButton=(Button) findViewById(R.id.go);
 
         sumText=(TextView)findViewById(R.id.sumText);
-
-        button0=(Button) findViewById(R.id.button0) ;
-        button1=(Button) findViewById(R.id. button1) ;
-        button2=(Button) findViewById(R.id.button2) ;
-        button3=(Button) findViewById(R.id.button3) ;
+        if(gameIsActive) {
+            button0 = (Button) findViewById(R.id.button0);
+            button1 = (Button) findViewById(R.id.button1);
+            button2 = (Button) findViewById(R.id.button2);
+            button3 = (Button) findViewById(R.id.button3);
+        }
         resultText=(TextView)findViewById(R.id.resultText);
         result=(TextView)findViewById(R.id.result);
         timertextView=(TextView)findViewById(R.id.timertextView);
@@ -142,19 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-     /*  new CountDownTimer(30100,1000){
 
-           @Override
-           public void onTick(long millisUntilFinished) {
-               timertextView.setText(String.valueOf(millisUntilFinished/1000)+"s");
-           }
-
-           @Override
-           public void onFinish() {
-               playAgain.setVisibility(View.VISIBLE);
-               timertextView.setText("0s");
-            resultText.setText("Your Score: "+ Integer.toString((score))+ "/" + Integer.toString(numberOfQuestion));
-           }
-       }.start();*/
     }
 }
